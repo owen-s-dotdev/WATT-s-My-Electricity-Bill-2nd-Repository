@@ -3,9 +3,9 @@
 import sys
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QGridLayout, QLabel, QComboBox,
-    QPushButton, QMessageBox, QHBoxLayout, QGroupBox
+    QPushButton, QMessageBox, QHBoxLayout, QGroupBox, QGraphicsOpacityEffect
 )
-from PyQt6.QtCore import QSize
+from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -15,6 +15,11 @@ class MainWindow(QMainWindow):
         central = QWidget()
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
+
+        # ADDED FADE IN EFFECT
+        self.opacity = QGraphicsOpacityEffect()
+        self.setGraphicsEffect(self.opacity)
+        self.opacity.setOpacity(0)
 
         #  Input Section
         input_grid_layout = QGridLayout()
@@ -106,6 +111,15 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(input_group)
         self.main_layout.addWidget(btn_group)
         self.main_layout.addWidget(output_group)
+
+    # ADDED FADE IN ANIMATION
+    def fade_in(self):
+        self.anim = QPropertyAnimation(self.opacity, b"opacity")
+        self.anim.setDuration(1500)
+        self.anim.setStartValue(0)
+        self.anim.setEndValue(1)
+        self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        self.anim.start()
 
     def handle_add_appliance(self):
         appliance = self.input_type_combo.currentText()
