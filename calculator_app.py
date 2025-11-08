@@ -13,17 +13,62 @@ class MainWindow(QMainWindow):
 
         self.setWindowTitle("Watt's my Electricity Bill?")
         central = QWidget()
+        central.setAutoFillBackground(True)
+        central.setStyleSheet("""
+            background: qlineargradient(
+                x1:0, y1:0, x2:1, y2:0,  /* left to right */
+                stop:0 #ff914d,           /* darker orange on the left */
+                stop:1 #ffd27f            /* lighter orange on the right */
+            );
+        """)
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
+        
 
         # ADDED FADE IN EFFECT
         self.opacity = QGraphicsOpacityEffect()
         self.setGraphicsEffect(self.opacity)
         self.opacity.setOpacity(0)
 
+        # button style for each group
+        button_style = """
+            QPushButton {
+                background-color: #ffffff;      /* white background */
+                color: #333333;                 /* dark text */
+                border: 2px solid #cc6600;      /* darker orange border to match QGroupBoxes */
+                border-radius: 6px;
+                padding: 6px 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #f0f0f0;      /* light gray on hover */
+            }
+            QPushButton:pressed {
+                background-color: #e0e0e0;      /* slightly darker gray when pressed */
+            }
+        """
+
+        groupbox_style = """
+            QGroupBox {
+                background-color: #ffffff;       /* solid white */
+                color: #333333;                  /* dark text */
+                font-weight: bold;
+                border: 2px solid #cc6600;       /* darker orange border */
+                border-radius: 8px;
+                margin-top: 10px;
+            }
+            QGroupBox:title {
+                subcontrol-origin: margin;
+                subcontrol-position: top left;
+                padding: 0 3px;
+            }
+        """
         #  Input Section
         input_grid_layout = QGridLayout()
         input_group = QGroupBox("Appliance Input")
+        # Input Section
+        input_group.setStyleSheet(groupbox_style)
+
         input_group.setLayout(input_grid_layout)
 
         # Default preset appliance ratings
@@ -105,6 +150,8 @@ class MainWindow(QMainWindow):
         #  Button Section
         btn_layout = QHBoxLayout()
         btn_group = QGroupBox("Actions")
+        # Button Section
+        btn_group.setStyleSheet(groupbox_style)
         btn_group.setLayout(btn_layout)
 
         add_btn = QPushButton("Add Appliance")
@@ -127,6 +174,8 @@ class MainWindow(QMainWindow):
         #  Output Section
         output_grid_layout = QGridLayout()
         output_group = QGroupBox("Estimated Cost")
+        # Output Section
+        output_group.setStyleSheet(groupbox_style)
         output_group.setLayout(output_grid_layout)
 
         self.daily_cost_label = QLabel("Daily Cost: ₱0.00")
