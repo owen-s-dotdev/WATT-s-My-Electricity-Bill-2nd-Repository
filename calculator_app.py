@@ -26,16 +26,43 @@ class MainWindow(QMainWindow):
         input_group = QGroupBox("Appliance Input")
         input_group.setLayout(input_grid_layout)
 
+        # Default preset appliance ratings
+        self.appliance_presets = {
+        "Refrigerator": {"watts": "150W", "usage": "24", "rate": "12"},
+        "Television": {"watts": "100W", "usage": "4", "rate": "12"},
+        "Air Conditioner": {"watts": "1200W", "usage": "8", "rate": "12"},
+        "Electric Fan": {"watts": "75W", "usage": "6", "rate": "12"},
+        "Light Bulb": {"watts": "10W", "usage": "5", "rate": "12"},
+        "Washing Machine": {"watts": "500W", "usage": "1", "rate": "12"},
+        "Microwave Oven": {"watts": "1000W", "usage": "0.5", "rate": "12"},
+        "Electric Kettle": {"watts": "1500W", "usage": "0.3", "rate": "12"},
+        "Rice Cooker": {"watts": "700W", "usage": "1", "rate": "12"},
+        "Hair Dryer": {"watts": "1200W", "usage": "0.2", "rate": "12"},
+        "Desktop Computer": {"watts": "250W", "usage": "6", "rate": "12"},
+        "Laptop": {"watts": "60W", "usage": "6", "rate": "12"},
+        "Wi-Fi Router": {"watts": "10W", "usage": "24", "rate": "12"},
+        "Electric Iron": {"watts": "1000W", "usage": "0.5", "rate": "12"},
+        "Blender": {"watts": "300W", "usage": "0.2", "rate": "12"},
+        "Toaster": {"watts": "800W", "usage": "0.2", "rate": "12"},
+        "Water Dispenser": {"watts": "100W", "usage": "8", "rate": "12"},
+        "Printer": {"watts": "50W", "usage": "0.5", "rate": "12"},
+        }
+
         input_type_txt = QLabel("Select Appliance Type")
         self.input_type_combo = QComboBox()
-        self.input_type_combo.addItems(["Refrigerator", "Television", "Air Conditioner", "Fan", "Light Bulb"])
-        self.input_type_combo.setPlaceholderText("Type of appliance...")
+        self.input_type_combo.addItem("Select Appliance...")
+        self.input_type_combo.model().item(0).setEnabled(False) 
+        self.input_type_combo.addItems(sorted(self.appliance_presets.keys()))
+        self.input_type_combo.setCurrentIndex(0)  
+        self.input_type_combo.setEditable(False)
+        
+        self.input_type_combo.currentIndexChanged.connect(self.on_appliance_selected)
 
         power_label = QLabel("Power Consumption")
         power_label_unit = QLabel("Watts (W)")
         self.power_input = QComboBox()
         self.power_input.setEditable(True)
-        self.power_input.addItems(["100W", "200W", "300W"])
+        self.power_input.addItems(["10W","75W","100W", "150W","200W", "300W", "500W", "750W", "1000W", "1200W", "1500W"])
         self.power_input.setPlaceholderText("Select or enter power consumption")
 
         usage_label = QLabel("Use per day")
@@ -174,8 +201,24 @@ class MainWindow(QMainWindow):
         self.daily_cost_label.setText(f"Daily Cost: ₱{total_cost:.2f}")
         self.monthly_cost_label.setText(f"Monthly Estimate: ₱{monthly_cost:.2f}")
 
+        # preset filling method
+    def fill_appliance_defaults(self, appliance_name):
+        preset = self.appliance_presets.get(appliance_name)
+        if preset:
+            self.power_input.setEditText(str(preset["watts"]))
+            self.usage_input.setEditText(str(preset["usage"]))
+            self.rate_input.setEditText(str(preset["rate"]))
+
+    
+    def on_appliance_selected(self, index):
+        if index <= 0:
+            return
+        appliance_name = self.input_type_combo.itemText(index)
+        self.fill_appliance_defaults(appliance_name)
+    
     def handle_reset(self):
-        self.input_type_combo.setCurrentIndex(-1)
+        self.input_type_combo.setCurrentIndex(0)
+        self.input_type_combo.setEditText("") 
         self.power_input.setCurrentIndex(-1)
         self.usage_input.setCurrentIndex(-1)
         self.rate_input.setCurrentIndex(-1)
