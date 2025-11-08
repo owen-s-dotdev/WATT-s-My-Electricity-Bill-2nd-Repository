@@ -1,8 +1,8 @@
-#getstarted.py
+# get started
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
-from PyQt6.QtGui import QPixmap, QFont
+from PyQt6.QtGui import QPixmap
 
 class GetStartedScreen(QWidget):
     def __init__(self, stacked_widget):
@@ -13,7 +13,7 @@ class GetStartedScreen(QWidget):
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
         layout.setSpacing(25)
 
-        # ADDED LOGO
+        # Logo
         logo = QLabel()
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
         pixmap = QPixmap("C:/Users/JAMES/PYTHON FILES/PROJECT OOP/assets/ECB OOP.png")
@@ -23,29 +23,40 @@ class GetStartedScreen(QWidget):
             pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
 
-        # Welcome
+        # Welcome text
         welcome_label = QLabel("Welcome to Watt's my Electricity Bill?")
         welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        start_button = QPushButton("Get Started")
-        start_button.clicked.connect(self.go_to_main)
+        welcome_label.setStyleSheet("font-size: 24px; color: #2C3E50; margin-bottom: 20px;")
 
-        # Button
+        # Get Started button
         start_button = QPushButton("Get Started")
-        start_button.setStyleSheet("padding: 10px 20px; font-size: 16px; background-color: #6A1B9A; color: white; border-radius: 8px;")
-        start_button.clicked.connect(self.go_to_main)
+        start_button.setStyleSheet("""
+            QPushButton {
+                padding: 10px 20px;
+                font-size: 16px;
+                background-color: #6A1B9A;
+                color: white;
+                border-radius: 8px;
+                min-width: 150px;
+            }
+            QPushButton:hover {
+                background-color: #8E24AA;
+            }
+        """)
+        start_button.clicked.connect(self.start_transition)
 
         # Layout
         layout.addWidget(logo)
         layout.addWidget(welcome_label)
         layout.addWidget(start_button)
 
-        # ADDED FADE IN EFFECT
+        # Fade effect
         self.opacity = QGraphicsOpacityEffect()
         self.setGraphicsEffect(self.opacity)
         self.opacity.setOpacity(0)
         self.fade_in()
 
-        # ADDED FADE IN ANIMATION
+    # Fade in animation
     def fade_in(self):
         self.anim = QPropertyAnimation(self.opacity, b"opacity")
         self.anim.setDuration(1500)
@@ -54,19 +65,22 @@ class GetStartedScreen(QWidget):
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
         self.anim.start()
 
-        # ADDED FADE OUT ANIMATION
+    # Fade out animation
+    def start_transition(self):
+        self.fade_out()
+
     def fade_out(self):
         self.anim = QPropertyAnimation(self.opacity, b"opacity")
-        self.anim.setDuration(1500)
+        self.anim.setDuration(1000)
         self.anim.setStartValue(1)
         self.anim.setEndValue(0)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
-        self.anim.finished.connect(self.go_to_main)
+        self.anim.finished.connect(self.go_to_login)
         self.anim.start()
 
-    def go_to_main(self):
-        self.stacked_widget.setCurrentIndex(1)
-
-        # ADDED FADE IN TO CALC
-        calculator_screen = self.stacked_widget.widget(1)
-        calculator_screen.fade_in()
+    def go_to_login(self):
+        """Switch to the login page"""
+        self.stacked_widget.setCurrentIndex(1)  # Login page at index 1
+        login_screen = self.stacked_widget.widget(1)
+        if hasattr(login_screen, 'fade_in'):
+            login_screen.fade_in()
