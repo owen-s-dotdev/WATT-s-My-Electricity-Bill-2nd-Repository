@@ -1,3 +1,5 @@
+# sections/input_section.py
+
 from PyQt6.QtWidgets import QGroupBox, QGridLayout, QLabel, QComboBox
 
 class InputSection(QGroupBox):

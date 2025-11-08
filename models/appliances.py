@@ -1,3 +1,4 @@
+# models/appliances.py
 # Appliance presets and cost calculation
 
 APPLIANCE_PRESETS = {

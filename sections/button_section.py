@@ -1,3 +1,4 @@
+# sections/button_section.py
 from PyQt6.QtWidgets import QGroupBox, QHBoxLayout, QPushButton
 
 class ButtonSection(QGroupBox):

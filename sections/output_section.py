@@ -1,3 +1,4 @@
+# sections/output_section.py
 from PyQt6.QtWidgets import QGroupBox, QGridLayout, QLabel
 
 class OutputSection(QGroupBox):
