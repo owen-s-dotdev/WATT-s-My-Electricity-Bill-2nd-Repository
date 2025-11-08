@@ -25,7 +25,7 @@ class AppController(QMainWindow):
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
 
-        # Create navigation sidebar
+        # Create navigation sidebar container
         nav_container = QWidget()
         nav_container.setMaximumWidth(250)
         nav_container.setMinimumWidth(250)
@@ -39,7 +39,7 @@ class AppController(QMainWindow):
         nav_layout.setContentsMargins(0, 0, 0, 0)
         nav_layout.setSpacing(0)
 
-        # Navigation list
+        # Create navigation list
         self.nav_list = QListWidget()
         self.nav_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         self.nav_list.setStyleSheet("""
@@ -58,7 +58,7 @@ class AppController(QMainWindow):
                 background-color: #34495E;
                 color: #FFFFFF;
                 border-left: 6px solid #3498DB;
-                padding-left: 12px;
+                padding-left: 12px; /* account for left border */
             }
             QListWidget::item:hover {
                 background-color: #375a7f;
@@ -66,17 +66,17 @@ class AppController(QMainWindow):
         """)
         nav_layout.addWidget(self.nav_list)
 
-        # Navigation items
+        # Add navigation items
         nav_items = ["Profile", "Calculator", "History", "Settings"]
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             self.nav_list.addItem(list_item)
 
-        # Connect navigation selection
+        # Connect navigation signal
         self.nav_list.currentRowChanged.connect(self.handle_navigation)
 
-        # Navigation title
+        # Add title to navigation
         nav_title = QLabel("Menu")
         nav_title.setStyleSheet("""
             QLabel {
@@ -89,18 +89,16 @@ class AppController(QMainWindow):
         """)
         nav_layout.insertWidget(0, nav_title)
 
-        # Create stacked widget
+        # Create stacked widget for different pages
         self.stack = QStackedWidget()
-
-        # Screens
         self.get_started_screen = GetStartedScreen(self.stack)  # index 0
         self.login_screen = LoginPage(self.stack)               # index 1
         self.profile_screen = ProfilePage()                     # index 2
-        self.main_screen = MainWindow()                         # index 3 (Calculator)
+        self.main_screen = MainWindow()                         # index 3
         self.history_screen = HistoryPage()                     # index 4
         self.settings_screen = SettingsPage()                   # index 5
 
-        # Add screens to stack
+        # Add widgets to stacked widget
         self.stack.addWidget(self.get_started_screen)  # 0
         self.stack.addWidget(self.login_screen)        # 1
         self.stack.addWidget(self.profile_screen)      # 2
@@ -108,61 +106,74 @@ class AppController(QMainWindow):
         self.stack.addWidget(self.history_screen)      # 4
         self.stack.addWidget(self.settings_screen)     # 5
 
-        # Store containers
+        # Store references to containers
         self.nav_container = nav_container
         self.main_layout = main_layout
 
-        # Layout: sidebar + stacked widget
+        # Add widgets to main layout
         main_layout.addWidget(nav_container)
         main_layout.addWidget(self.stack)
 
-        # Initial state
-        self.nav_container.hide()          # hide nav until after login
-        self.stack.setCurrentIndex(0)      # show Get Started first
+        # Set up initial state
+        self.nav_container.hide()  # Initially hide navigation
+        self.stack.setCurrentIndex(0)  # Show welcome screen first
+
+        # Keep stack and nav in sync: when the stack changes, update nav selection
         self.stack.currentChanged.connect(self.on_stack_changed)
 
-        # Set central widget
+        # Set the central widget
         self.setCentralWidget(main_widget)
 
-        # Debug
-        print("AppController initialized. Nav container exists:", hasattr(self, 'nav_container'))
+        # Debug print
+        print("Initial setup complete. Nav container exists:", hasattr(self, 'nav_container'))
 
     def show_navigation(self):
-        """Show navigation sidebar"""
+        """Show the navigation sidebar with a fade effect"""
         if hasattr(self, 'nav_container'):
             self.nav_container.show()
-            self.nav_container.raise_()
+            self.nav_container.raise_()  # Bring to front
 
     def on_stack_changed(self, stack_index: int):
-        """Sync nav with stacked widget"""
-        # Hide nav for Get Started & Login screens
+        """Keep the side navigation selection in sync with the stacked widget.
+
+        Mapping:
+        - stack 0 -> welcome (no selection / hide nav)
+        - stack 1 -> login (no selection / hide nav)
+        - stack 2 -> Profile (nav index 0)
+        - stack 3 -> Calculator (nav index 1)
+        - stack 4 -> History (nav index 2)
+        - stack 5 -> Settings (nav index 3)
+        """
+        # Hide nav for welcome and login screens
         if stack_index in [0, 1]:
             if hasattr(self, 'nav_container'):
                 self.nav_container.hide()
             self.nav_list.setCurrentRow(-1)
             return
 
-        # Show nav
+        # Ensure nav is visible
         if hasattr(self, 'nav_container') and not self.nav_container.isVisible():
             self.nav_container.show()
 
-        # Map stack index -> nav index (subtract 2)
+        # Map stack index -> nav index (subtract 2 to skip welcome & login)
         nav_index = stack_index - 2
         if 0 <= nav_index < self.nav_list.count():
             try:
+                # Block signals to prevent recursive changes
                 self.nav_list.blockSignals(True)
                 self.nav_list.setCurrentRow(nav_index)
             finally:
                 self.nav_list.blockSignals(False)
 
     def handle_navigation(self, index):
-        """Change stacked widget when nav item clicked"""
+        """Handle clicks on the navigation sidebar and update stacked widget"""
         if index < 0:
             return
-        # Map nav index -> stack index (add 2 to skip Get Started + Login)
+
+        # Map navigation index to stack index (add 2 to skip welcome + login)
         stack_index = index + 2
         self.stack.setCurrentIndex(stack_index)
 
-        # Fade in Calculator if selected
+        # Handle fade in for calculator screen
         if index == 1 and hasattr(self.main_screen, 'fade_in'):
             self.main_screen.fade_in()
