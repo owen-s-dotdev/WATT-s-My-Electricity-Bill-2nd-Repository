@@ -20,7 +20,7 @@ class AppController(QMainWindow):
 
         # Create main widget and layout
         main_widget = QWidget()
-        self.main_widget = main_widget
+        self.main_widget = main_widget  # Store reference to main widget
         main_layout = QHBoxLayout(main_widget)
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
@@ -91,14 +91,16 @@ class AppController(QMainWindow):
 
         # Create stacked widget for different pages
         self.stack = QStackedWidget()
+
+        # Original screens + added login page
         self.get_started_screen = GetStartedScreen(self.stack)  # index 0
-        self.login_screen = LoginPage(self.stack)               # index 1
+        self.login_screen = LoginPage(self.stack)               # index 1 (added)
         self.profile_screen = ProfilePage()                     # index 2
         self.main_screen = MainWindow()                         # index 3
         self.history_screen = HistoryPage()                     # index 4
         self.settings_screen = SettingsPage()                   # index 5
 
-        # Add widgets to stacked widget
+        # Add widgets to stack
         self.stack.addWidget(self.get_started_screen)  # 0
         self.stack.addWidget(self.login_screen)        # 1
         self.stack.addWidget(self.profile_screen)      # 2
@@ -117,8 +119,7 @@ class AppController(QMainWindow):
         # Set up initial state
         self.nav_container.hide()  # Initially hide navigation
         self.stack.setCurrentIndex(0)  # Show welcome screen first
-
-        # Keep stack and nav in sync: when the stack changes, update nav selection
+        # keep stack and nav in sync: when the stack changes, update nav selection
         self.stack.currentChanged.connect(self.on_stack_changed)
 
         # Set the central widget
@@ -159,21 +160,18 @@ class AppController(QMainWindow):
         nav_index = stack_index - 2
         if 0 <= nav_index < self.nav_list.count():
             try:
-                # Block signals to prevent recursive changes
                 self.nav_list.blockSignals(True)
                 self.nav_list.setCurrentRow(nav_index)
             finally:
                 self.nav_list.blockSignals(False)
 
     def handle_navigation(self, index):
-        """Handle clicks on the navigation sidebar and update stacked widget"""
+        # Map navigation index to stack index (add 2 to skip welcome + login)
         if index < 0:
             return
-
-        # Map navigation index to stack index (add 2 to skip welcome + login)
         stack_index = index + 2
         self.stack.setCurrentIndex(stack_index)
 
-        # Handle fade in for calculator screen
+        # Handle fade in for calculator
         if index == 1 and hasattr(self.main_screen, 'fade_in'):
             self.main_screen.fade_in()
