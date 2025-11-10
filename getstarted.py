@@ -1,7 +1,7 @@
 # get started
 
-from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect
-from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
+from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect, QProgressBar, QSizePolicy, QSpacerItem
+from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer
 from PyQt6.QtGui import QPixmap
 
 class GetStartedScreen(QWidget):
@@ -11,7 +11,8 @@ class GetStartedScreen(QWidget):
 
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        layout.setSpacing(25)
+        layout.setSpacing(15)
+        layout.setContentsMargins(0, 0, 0, 0)  # ensure dynamic centering
 
         # Logo
         logo = QLabel()
@@ -26,35 +27,58 @@ class GetStartedScreen(QWidget):
         # Welcome text
         welcome_label = QLabel("Welcome to Watt's my Electricity Bill?")
         welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        welcome_label.setStyleSheet("font-size: 24px; color: #2C3E50; margin-bottom: 20px;")
+        welcome_label.setStyleSheet("font-size: 24px; color: #2C3E50; margin: 0; padding: 0;")
 
-        # Get Started button
-        start_button = QPushButton("Get Started")
-        start_button.setStyleSheet("""
-            QPushButton {
-                padding: 10px 20px;
-                font-size: 16px;
-                background-color: #6A1B9A;
-                color: white;
-                border-radius: 8px;
-                min-width: 150px;
-            }
-            QPushButton:hover {
-                background-color: #8E24AA;
-            }
+        # Replaced button with progress bar
+        self.progress = QProgressBar()
+        self.progress.setRange(0, 100)
+        self.progress.setValue(0)
+        self.progress.setFixedWidth(1000)
+        self.progress.setTextVisible(False)
+        self.progress.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.progress.setStyleSheet("""
+        QProgressBar {
+            border: 1px solid #2E2E2E;
+            border-radius: 10px;
+            background-color: #1E1E1E;
+            color: #E5D1FF;
+            text-align: center;
+            height: 14px;
+            font-size: 13px;
+            padding: 1px;
+        }
+        QProgressBar::chunk {
+            border-radius: 10px;
+            background-color: qlineargradient(
+                spread:pad, x1:0, y1:0, x2:1, y2:0,
+                stop:0 #9b59b6, stop:1 #8e44ad
+            );
+            margin: 1px;  /* ensures smooth blending */
+        }
         """)
-        start_button.clicked.connect(self.start_transition)
 
         # Layout
+        layout.addStretch()
         layout.addWidget(logo)
+        layout.addSpacing(5)
         layout.addWidget(welcome_label)
-        layout.addWidget(start_button)
+        layout.addSpacing(20)
+        layout.addWidget(self.progress)
+        layout.addStretch()
 
         # Fade effect
         self.opacity = QGraphicsOpacityEffect()
         self.setGraphicsEffect(self.opacity)
         self.opacity.setOpacity(0)
         self.fade_in()
+
+        # timer for progress
+        self._timer = QTimer(self)
+        self._timer.setInterval(30)  # adjust speed as desired
+        self._timer.timeout.connect(self._advance_progress)
+
+        # make layout responsive
+        self.setSizePolicy(QSizePolicy.Policy.Expanding, QSizePolicy.Policy.Expanding)
 
     # Fade in animation
     def fade_in(self):
@@ -63,11 +87,24 @@ class GetStartedScreen(QWidget):
         self.anim.setStartValue(0)
         self.anim.setEndValue(1)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
+        # start filling progress after fade in
+        self.anim.finished.connect(self.start_loading)
         self.anim.start()
 
-    # Fade out animation
-    def start_transition(self):
-        self.fade_out()
+    # start filling the progress bar
+    def start_loading(self):
+        self.progress.setValue(0)
+        self._timer.start()
+
+    # advance the progress bar, then transition when done
+    def _advance_progress(self):
+        val = self.progress.value() + 2
+        if val >= 100:
+            self.progress.setValue(100)
+            self._timer.stop()
+            self.fade_out()   # proceed to fade out and switch screen
+            return
+        self.progress.setValue(val)
 
     def fade_out(self):
         self.anim = QPropertyAnimation(self.opacity, b"opacity")
