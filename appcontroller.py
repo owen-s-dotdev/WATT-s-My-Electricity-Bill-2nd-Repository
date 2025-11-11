@@ -1,6 +1,7 @@
 # appcontroller.py
 
-from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QWidget, QHBoxLayout
+from PyQt6.QtWidgets import QMainWindow, QStackedWidget, QWidget, QHBoxLayout, QApplication
+from PyQt6.QtGui import QPalette, QColor
 from PyQt6.QtCore import QSize
 from getstarted import GetStartedScreen
 from login_page import LoginPage
@@ -79,5 +80,11 @@ class AppController(QMainWindow):
             return
         stack_index = index + 2
         self.stack.setCurrentIndex(stack_index)
+
+        # If user clicks "History", load their file
+        if index == 2:  # History is 3rd item in navigation
+            current_user = getattr(self.login_screen, "current_user", "Guest")
+            self.history_screen.load_history(current_user)
+
         if index == 1 and hasattr(self.main_screen, 'fade_in'):
             self.main_screen.fade_in()
