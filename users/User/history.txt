@@ -19,3 +19,7 @@ Electric Fan - 75W x 6hr @ 12₱/kWh
 Hair Dryer - 1200W x 0.2hr @ 12₱/kWh
 Total Daily: ₱8.28, Monthly: ₱248.40
 
+---- New Calculation (2025-11-11) ----
+Desktop Computer - 250W x 6hr @ 12₱/kWh
+Total Daily: ₱18.00, Monthly: ₱540.00
+

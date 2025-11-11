@@ -3,9 +3,185 @@ import os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QGridLayout, QLabel, QComboBox,
     QPushButton, QMessageBox, QHBoxLayout, QGroupBox,
-    QSpacerItem, QSizePolicy  # <-- ADDED IMPORTS
+    QSpacerItem, QSizePolicy, QDateEdit
 )
-from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve, Qt
+from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve, Qt, QDate
+
+# --- 1. MOVED STYLESHEET HERE ---
+# By making this a global constant, we can apply it to the app
+modern_stylesheet = """
+    /* --- Global Font --- */
+    QWidget {
+        font-family: 'Poppins';
+        font-size: 14px;
+    }
+
+    /* --- 4. TARGET THE GRADIENT BACKGROUND --- */
+    #centralWidget {
+        background: qlineargradient(
+            x1:0, y1:0, x2:1, y2:0,
+            stop:0 #ff914d,
+            stop:1 #ffd27f
+        );
+    }
+
+    /* --- GroupBox Styling (Light Gray) --- */
+    QGroupBox {
+        background-color: #f9f9f9;
+        color: #333333;
+        border: 1px solid #eeeeee;
+        border-radius: 8px;
+        margin-top: 10px;
+        padding: 10px;
+    }
+    QGroupBox:title {
+        subcontrol-origin: margin;
+        subcontrol-position: top left;
+        padding: 0 5px;
+        color: #333333;
+        font-weight: bold;
+        font-size: 16px;
+        left: 10px;
+        top: 3px;
+    }
+
+    /* --- Button Styling --- */
+    QPushButton {
+        background-color: #f8f8f8;
+        color: #cc6600;
+        border: 1px solid #cc6600;
+        border-radius: 8px;
+        padding: 8px 12px;
+        font-weight: bold;
+    }
+    QPushButton:hover {
+        background-color: #fbeadb;
+    }
+    QPushButton:pressed {
+        background-color: #e3e6e4;
+    }
+
+    /* --- ComboBox Styling (Pure White) --- */
+    QComboBox {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        padding: 6px;
+        color: #333333;
+    }
+    QComboBox QAbstractItemView {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        selection-background-color: #ffd27f;
+        selection-color: #333333;
+        outline: 0px;
+    }
+
+    /* --- Label Styling (Transparent) --- */
+    QLabel {
+        color: #333333;
+        background-color: transparent; 
+        padding: 4px;
+    }
+    
+    /* --- QDateEdit Styling --- */
+    QDateEdit {
+        background-color: #ffffff;
+        border: 1px solid #dddddd;
+        border-radius: 6px;
+        padding: 6px;
+        color: #333333;
+    }
+    QDateEdit::drop-down {
+        subcontrol-origin: padding;
+        subcontrol-position: top right;
+        width: 20px;
+        border-left-width: 1px;
+        border-left-color: #dddddd;
+        border-left-style: solid;
+        border-top-right-radius: 6px;
+        border-bottom-right-radius: 6px;
+    }
+    
+
+    /* CALENDAR STYLE */
+
+    /* --- Main Calendar Widget --- */
+    QCalendarWidget {
+        background-color: #ffffff;
+        border: 1px solid #eeeeee;
+        border-radius: 8px;
+    }
+
+    /* --- Navigation Bar (Month/Year) --- */
+    QCalendarWidget QWidget#qt_calendar_navigationbar {
+        background-color: #fbeadb; /* Light orange hover color */
+        border-bottom: 1px solid #eeeeee;
+        border-top-left-radius: 8px;
+        border-top-right-radius: 8px;
+    }
+    
+    /* --- Month/Year Text & Arrow Buttons --- */
+    QCalendarWidget QToolButton {
+        color: #cc6600; /* Dark Orange */
+        font-weight: bold;
+        background-color: transparent;
+        border: none;
+        margin: 5px;
+        padding: 5px;
+        border-radius: 4px;
+    }
+    QCalendarWidget QToolButton:hover {
+        background-color: #ffd27f; /* Lighter accent orange */
+    }
+    QCalendarWidget QToolButton:pressed {
+        background-color: #ff914d; /* Main accent orange */
+        color: #ffffff;
+    }
+
+    /* --- Weekday Headers (Mon, Tue, Wed...) --- */
+    QCalendarWidget QHeaderView::section {
+        background-color: #ffffff;
+        border: none;
+        padding: 6px;
+        font-weight: 500;
+        color: #333333;
+    }
+
+    /* --- Main Date Grid --- */
+    QCalendarWidget QTableView {
+        background-color: #ffffff;
+        border: 1px solid #eeeeee; 
+        gridline-color: #eeeeee; /* Remove grid lines */
+    }
+
+    /* --- Individual Date Cells --- */
+    QCalendarWidget QTableView::item {
+        background-color: transparent;
+        color: #333333;
+        border-radius: 4px;
+    }
+
+    /* --- Dates from other months --- */
+    QCalendarWidget QTableView::item:disabled {
+        color: #cccccc;
+        background-color: #f9f9f9;
+    }
+
+    /* --- Today's Date --- */
+    QCalendarWidget QTableView::item:today {
+        background-color: #fbeadb; /* Light orange */
+        color: #cc6600; /* Dark orange text */
+        font-weight: bold;
+    }
+
+    /* --- Selected Date (Clicked) --- */
+    QCalendarWidget QTableView::item:selected {
+        background-color: #ff914d; /* Main accent orange */
+        color: #ffffff; /* White text */
+    }
+"""
+
 
 class MainWindow(QMainWindow):
     def __init__(self):
@@ -18,96 +194,17 @@ class MainWindow(QMainWindow):
         central = QWidget()
         central.setAutoFillBackground(True)
         
-        # --- 1. SET OBJECT NAME ---
         central.setObjectName("centralWidget") 
         
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
         
-        # --- 3. UNIFIED STYLESHEET ---
-        
-        modern_stylesheet = """
-            /* --- Global Font --- */
-            QWidget {
-                font-family: 'Poppins';
-                font-size: 14px;
-            }
-
-            /* --- 4. TARGET THE GRADIENT BACKGROUND --- */
-            #centralWidget {
-                background: qlineargradient(
-                    x1:0, y1:0, x2:1, y2:0,
-                    stop:0 #ff914d,
-                    stop:1 #ffd27f
-                );
-            }
-
-            /* --- GroupBox Styling (Light Gray) --- */
-            QGroupBox {
-                background-color: #f9f9f9;
-                color: #333333;
-                border: 1px solid #eeeeee;
-                border-radius: 8px;
-                margin-top: 10px;
-                padding: 10px;
-            }
-            QGroupBox:title {
-                subcontrol-origin: margin;
-                subcontrol-position: top left;
-                padding: 0 5px;
-                color: #333333;
-                font-weight: bold;
-                font-size: 16px;
-                left: 10px;
-                top: 3px; /* <-- ADDED: Pushes the title text down 3px */
-            }
-
-            /* --- Button Styling --- */
-            QPushButton {
-                background-color: #f8f8f8;
-                color: #cc6600;
-                border: 1px solid #cc6600;
-                border-radius: 8px;
-                padding: 8px 12px;
-                font-weight: bold;
-            }
-            QPushButton:hover {
-                background-color: #fbeadb;
-            }
-            QPushButton:pressed {
-                background-color: #e3e6e4;
-            }
-
-            /* --- ComboBox Styling (Pure White) --- */
-            QComboBox {
-                background-color: #ffffff;
-                border: 1px solid #dddddd;
-                border-radius: 6px;
-                padding: 6px;
-                color: #333333;
-            }
-            QComboBox QAbstractItemView {
-                background-color: #ffffff;
-                border: 1px solid #dddddd;
-                selection-background-color: #ffd27f;
-                selection-color: #333333;
-                outline: 0px;
-            }
-            /*
-            QComboBox::drop-down {
-                border: none;
-                padding-right: 10px;
-            }*/
-
-            /* --- Label Styling (Transparent) --- */
-            QLabel {
-                color: #333333;
-                background-color: transparent; 
-                padding: 4px;
-            }
-        """
-        
-        self.setStyleSheet(modern_stylesheet)
+        # --- 2. MODIFIED STYLESHEET APPLICATION ---
+        # We apply it to the *entire running application* instance
+        # so that new windows (like the calendar) inherit the style.
+        app_instance = QApplication.instance()
+        if app_instance: # Check if an app instance exists
+             app_instance.setStyleSheet(modern_stylesheet) 
         
         #  Input Section
         input_grid_layout = QGridLayout()
@@ -167,6 +264,12 @@ class MainWindow(QMainWindow):
         self.rate_input.addItems(["10", "12", "15", "18", "20"])
         self.rate_input.setPlaceholderText("Select or enter rate")
 
+        date_label = QLabel("Calculation Date")
+        self.date_input = QDateEdit()
+        self.date_input.setCalendarPopup(True)
+        self.date_input.setDate(QDate.currentDate())
+        self.date_input.setDisplayFormat("yyyy-MM-dd")
+
         appliances_label = QLabel("Appliances Added")
         self.appliances_added_combo = QComboBox()
         self.appliances_added_combo.setEditable(False)
@@ -187,8 +290,11 @@ class MainWindow(QMainWindow):
         input_grid_layout.addWidget(self.rate_input, 3, 1)
         input_grid_layout.addWidget(rate_label_unit, 3, 2)
 
-        input_grid_layout.addWidget(appliances_label, 4, 0)
-        input_grid_layout.addWidget(self.appliances_added_combo, 4, 1, 1, 2)
+        input_grid_layout.addWidget(date_label, 4, 0)
+        input_grid_layout.addWidget(self.date_input, 4, 1, 1, 2)
+
+        input_grid_layout.addWidget(appliances_label, 5, 0)
+        input_grid_layout.addWidget(self.appliances_added_combo, 5, 1, 1, 2)
         
         input_grid_layout.setColumnStretch(1, 1) 
         input_grid_layout.setColumnStretch(2, 0)
@@ -235,14 +341,10 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(btn_group)
         self.main_layout.addWidget(output_group)
 
-        # --- ADDED SPACER ---
-        # This spacer will push all widgets to the top and soak up
-        # any extra vertical space, preventing stretching.
         spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
         self.main_layout.addSpacerItem(spacer)
 
 
-    # --- FADE IN ANIMATION ---
     def fade_in(self):
         self.anim = QPropertyAnimation(self, b"windowOpacity")
         self.anim.setDuration(1000)
@@ -317,8 +419,12 @@ class MainWindow(QMainWindow):
             user_dir = os.path.join(os.getcwd(), "users", self.current_user)
             os.makedirs(user_dir, exist_ok=True)
             history_path = os.path.join(user_dir, "history.txt")
+            
+            calculation_date = self.date_input.date().toString("yyyy-MM-dd") 
+            
             with open(history_path, "a", encoding="utf-8") as f:
-                f.write("---- New Calculation ----\n")
+                f.write(f"---- New Calculation ({calculation_date}) ----\n")
+                
                 for i in range(self.appliances_added_combo.count()):
                     f.write(self.appliances_added_combo.itemText(i) + "\n")
                 f.write(f"Total Daily: ₱{total_cost:.2f}, Monthly: ₱{monthly_cost:.2f}\n\n")
@@ -348,6 +454,9 @@ class MainWindow(QMainWindow):
         self.power_input.setEditText("")
         self.usage_input.setEditText("")
         self.rate_input.setEditText("")
+        
+        self.date_input.setDate(QDate.currentDate())
+        
         self.appliances_added_combo.clear()
         self.daily_cost_label.setText("Daily Cost: ₱0.00")
         self.monthly_cost_label.setText("Monthly Estimate: ₱0.00")
