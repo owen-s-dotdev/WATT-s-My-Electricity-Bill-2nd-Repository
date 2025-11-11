@@ -1,76 +1,117 @@
-#calculator_app.py
-
 import sys
 import os
 from PyQt6.QtWidgets import (
     QApplication, QMainWindow, QWidget, QVBoxLayout, QGridLayout, QLabel, QComboBox,
-    QPushButton, QMessageBox, QHBoxLayout, QGroupBox, QGraphicsOpacityEffect
+    QPushButton, QMessageBox, QHBoxLayout, QGroupBox,
+    QSpacerItem, QSizePolicy  # <-- ADDED IMPORTS
 )
-from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve
+from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve, Qt
 
 class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.current_user = None  # logged in user
+        self.current_user = None
         self.setWindowTitle("Watt's my Electricity Bill?")
+        self.setWindowOpacity(0)
+
         central = QWidget()
         central.setAutoFillBackground(True)
-        central.setStyleSheet("""
-            background: qlineargradient(
-                x1:0, y1:0, x2:1, y2:0,  /* left to right */
-                stop:0 #ff914d,           /* darker orange on the left */
-                stop:1 #ffd27f            /* lighter orange on the right */
-            );
-        """)
+        
+        # --- 1. SET OBJECT NAME ---
+        central.setObjectName("centralWidget") 
+        
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
         
-
-        # ADDED FADE IN EFFECT
-        self.opacity = QGraphicsOpacityEffect()
-        self.setGraphicsEffect(self.opacity)
-        self.opacity.setOpacity(0)
-
-        # button style for each group
-        button_style = """
-            QPushButton {
-                background-color: #ffffff;      /* white background */
-                color: #333333;                 /* dark text */
-                border: 2px solid #cc6600;      /* darker orange border to match QGroupBoxes */
-                border-radius: 6px;
-                padding: 6px 12px;
-                font-weight: bold;
+        # --- 3. UNIFIED STYLESHEET ---
+        
+        modern_stylesheet = """
+            /* --- Global Font --- */
+            QWidget {
+                font-family: 'Poppins';
+                font-size: 14px;
             }
-            QPushButton:hover {
-                background-color: #f0f0f0;      /* light gray on hover */
-            }
-            QPushButton:pressed {
-                background-color: #e0e0e0;      /* slightly darker gray when pressed */
-            }
-        """
 
-        groupbox_style = """
+            /* --- 4. TARGET THE GRADIENT BACKGROUND --- */
+            #centralWidget {
+                background: qlineargradient(
+                    x1:0, y1:0, x2:1, y2:0,
+                    stop:0 #ff914d,
+                    stop:1 #ffd27f
+                );
+            }
+
+            /* --- GroupBox Styling (Light Gray) --- */
             QGroupBox {
-                background-color: #ffffff;       /* solid white */
-                color: #333333;                  /* dark text */
-                font-weight: bold;
-                border: 2px solid #cc6600;       /* darker orange border */
+                background-color: #f9f9f9;
+                color: #333333;
+                border: 1px solid #eeeeee;
                 border-radius: 8px;
                 margin-top: 10px;
+                padding: 10px;
             }
             QGroupBox:title {
                 subcontrol-origin: margin;
                 subcontrol-position: top left;
-                padding: 0 3px;
+                padding: 0 5px;
+                color: #333333;
+                font-weight: bold;
+                font-size: 16px;
+                left: 10px;
+                top: 3px; /* <-- ADDED: Pushes the title text down 3px */
+            }
+
+            /* --- Button Styling --- */
+            QPushButton {
+                background-color: #f8f8f8;
+                color: #cc6600;
+                border: 1px solid #cc6600;
+                border-radius: 8px;
+                padding: 8px 12px;
+                font-weight: bold;
+            }
+            QPushButton:hover {
+                background-color: #fbeadb;
+            }
+            QPushButton:pressed {
+                background-color: #e3e6e4;
+            }
+
+            /* --- ComboBox Styling (Pure White) --- */
+            QComboBox {
+                background-color: #ffffff;
+                border: 1px solid #dddddd;
+                border-radius: 6px;
+                padding: 6px;
+                color: #333333;
+            }
+            QComboBox QAbstractItemView {
+                background-color: #ffffff;
+                border: 1px solid #dddddd;
+                selection-background-color: #ffd27f;
+                selection-color: #333333;
+                outline: 0px;
+            }
+            /*
+            QComboBox::drop-down {
+                border: none;
+                padding-right: 10px;
+            }*/
+
+            /* --- Label Styling (Transparent) --- */
+            QLabel {
+                color: #333333;
+                background-color: transparent; 
+                padding: 4px;
             }
         """
+        
+        self.setStyleSheet(modern_stylesheet)
+        
         #  Input Section
         input_grid_layout = QGridLayout()
-        input_group = QGroupBox("Appliance Input")
-        # Input Section
-        input_group.setStyleSheet(groupbox_style)
-
+        input_group = QGroupBox()
         input_group.setLayout(input_grid_layout)
 
         # Default preset appliance ratings
@@ -132,28 +173,29 @@ class MainWindow(QMainWindow):
         self.appliances_added_combo.setPlaceholderText("Selected appliances will appear here")
 
         input_grid_layout.addWidget(input_type_txt, 0, 0)
-        input_grid_layout.addWidget(self.input_type_combo, 0, 1)
+        input_grid_layout.addWidget(self.input_type_combo, 0, 1, 1, 2)
 
         input_grid_layout.addWidget(power_label, 1, 0)
         input_grid_layout.addWidget(self.power_input, 1, 1)
-        input_grid_layout.addWidget(power_label_unit, 1, 3)
+        input_grid_layout.addWidget(power_label_unit, 1, 2) 
 
         input_grid_layout.addWidget(usage_label, 2, 0)
         input_grid_layout.addWidget(self.usage_input, 2, 1)
-        input_grid_layout.addWidget(usage_label_unit, 2, 3)
+        input_grid_layout.addWidget(usage_label_unit, 2, 2)
 
         input_grid_layout.addWidget(rate_label, 3, 0)
         input_grid_layout.addWidget(self.rate_input, 3, 1)
-        input_grid_layout.addWidget(rate_label_unit, 3, 3)
+        input_grid_layout.addWidget(rate_label_unit, 3, 2)
 
         input_grid_layout.addWidget(appliances_label, 4, 0)
-        input_grid_layout.addWidget(self.appliances_added_combo, 4, 1)
+        input_grid_layout.addWidget(self.appliances_added_combo, 4, 1, 1, 2)
+        
+        input_grid_layout.setColumnStretch(1, 1) 
+        input_grid_layout.setColumnStretch(2, 0)
 
         #  Button Section
         btn_layout = QHBoxLayout()
-        btn_group = QGroupBox("Actions")
-        # Button Section
-        btn_group.setStyleSheet(groupbox_style)
+        btn_group = QGroupBox()
         btn_group.setLayout(btn_layout)
 
         add_btn = QPushButton("Add Appliance")
@@ -175,13 +217,16 @@ class MainWindow(QMainWindow):
 
         #  Output Section
         output_grid_layout = QGridLayout()
-        output_group = QGroupBox("Estimated Cost")
-        # Output Section
-        output_group.setStyleSheet(groupbox_style)
+        output_group = QGroupBox()
         output_group.setLayout(output_grid_layout)
 
         self.daily_cost_label = QLabel("Daily Cost: ₱0.00")
         self.monthly_cost_label = QLabel("Monthly Estimate: ₱0.00")
+        
+        output_label_style = "background-color: transparent; font-size: 16px; font-weight: 500;"
+        self.daily_cost_label.setStyleSheet(output_label_style)
+        self.monthly_cost_label.setStyleSheet(output_label_style)
+
         output_grid_layout.addWidget(self.daily_cost_label, 0, 0)
         output_grid_layout.addWidget(self.monthly_cost_label, 1, 0)
 
@@ -190,10 +235,17 @@ class MainWindow(QMainWindow):
         self.main_layout.addWidget(btn_group)
         self.main_layout.addWidget(output_group)
 
-    # ADDED FADE IN ANIMATION
+        # --- ADDED SPACER ---
+        # This spacer will push all widgets to the top and soak up
+        # any extra vertical space, preventing stretching.
+        spacer = QSpacerItem(20, 40, QSizePolicy.Policy.Minimum, QSizePolicy.Policy.Expanding)
+        self.main_layout.addSpacerItem(spacer)
+
+
+    # --- FADE IN ANIMATION ---
     def fade_in(self):
-        self.anim = QPropertyAnimation(self.opacity, b"opacity")
-        self.anim.setDuration(1500)
+        self.anim = QPropertyAnimation(self, b"windowOpacity")
+        self.anim.setDuration(1000)
         self.anim.setStartValue(0)
         self.anim.setEndValue(1)
         self.anim.setEasingCurve(QEasingCurve.Type.InOutQuad)
@@ -205,8 +257,8 @@ class MainWindow(QMainWindow):
         usage = self.usage_input.currentText()
         rate = self.rate_input.currentText()
 
-        if not (appliance and power and usage and rate):
-            QMessageBox.warning(self, "Missing Input", "Please fill in all fields before adding.")
+        if appliance == "Select Appliance..." or not (power and usage and rate):
+            QMessageBox.warning(self, "Missing Input", "Please select an appliance and fill in all fields.")
             return
 
         try:
@@ -219,6 +271,11 @@ class MainWindow(QMainWindow):
 
         entry = f"{appliance} - {power} x {usage}hr @ {rate}₱/kWh"
         self.appliances_added_combo.addItem(entry)
+        
+        self.input_type_combo.setCurrentIndex(0)
+        self.power_input.setEditText("")
+        self.usage_input.setEditText("")
+        self.rate_input.setEditText("")
 
     def handle_remove_appliance(self):
         index = self.appliances_added_combo.currentIndex()
@@ -229,6 +286,10 @@ class MainWindow(QMainWindow):
 
     def handle_calculate(self):
         total_cost = 0.0
+
+        if self.appliances_added_combo.count() == 0:
+            QMessageBox.information(self, "No Appliances", "Please add at least one appliance to calculate.")
+            return
 
         for i in range(self.appliances_added_combo.count()):
             item_text = self.appliances_added_combo.itemText(i)
@@ -262,7 +323,6 @@ class MainWindow(QMainWindow):
                     f.write(self.appliances_added_combo.itemText(i) + "\n")
                 f.write(f"Total Daily: ₱{total_cost:.2f}, Monthly: ₱{monthly_cost:.2f}\n\n")
 
-        # preset filling method
     def fill_appliance_defaults(self, appliance_name):
         preset = self.appliance_presets.get(appliance_name)
         if preset:
@@ -273,13 +333,15 @@ class MainWindow(QMainWindow):
     
     def on_appliance_selected(self, index):
         if index <= 0:
+            self.power_input.setEditText("")
+            self.usage_input.setEditText("")
+            self.rate_input.setEditText("")
             return
         appliance_name = self.input_type_combo.itemText(index)
         self.fill_appliance_defaults(appliance_name)
     
     def handle_reset(self):
         self.input_type_combo.setCurrentIndex(0)
-        self.input_type_combo.setEditText("") 
         self.power_input.setCurrentIndex(-1)
         self.usage_input.setCurrentIndex(-1)
         self.rate_input.setCurrentIndex(-1)
