@@ -23,3 +23,9 @@ Total Daily: ₱8.28, Monthly: ₱248.40
 Desktop Computer - 250W x 6hr @ 12₱/kWh
 Total Daily: ₱18.00, Monthly: ₱540.00
 
+---- New Calculation (2025-11-07) ----
+Desktop Computer - 250W x 6hr @ 12₱/kWh
+Electric Fan - 75W x 6hr @ 12₱/kWh
+Light Bulb - 10W x 5hr @ 12₱/kWh
+Total Daily: ₱24.00, Monthly: ₱720.00
+
