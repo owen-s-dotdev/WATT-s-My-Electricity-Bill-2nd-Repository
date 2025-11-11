@@ -42,5 +42,5 @@ class ThemeManager:
             print("Error: No QApplication instance found.")
 
 # Create a single, global instance of the manager
-# This ensures all parts of your app access the same theme state.
+# This ensures all parts of the app access the same theme state.
 theme_manager = ThemeManager()

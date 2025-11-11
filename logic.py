@@ -70,5 +70,5 @@ def save_history(user_name, calculation_date, items, daily_cost, monthly_cost):
             f.write(f"Total Daily: ₱{daily_cost:.2f}, Monthly: ₱{monthly_cost:.2f}\n\n")
             
     except OSError as e:
-        # In a real app, you might want to log this error
+        # Error logging
         print(f"Error saving history: {e}")

@@ -1,3 +1,4 @@
+# styles.py
 """
 Contains the centralized QSS (Qt StyleSheet) strings
 for the Light and Dark themes.
@@ -77,8 +78,28 @@ QComboBox QAbstractItemView {
     outline: 0px;
 }
 QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left-width: 1px;
+    border-left-color: #dddddd;
+    border-left-style: solid;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+    /* REMOVED: image, background-repeat, background-position */
+}
+
+/* --- NEW SELECTOR for the arrow --- */
+QComboBox::down-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333333; /* Black arrow */
+    width: 0px;
+    height: 0px;
+    /* margin: 4px 4px 0px 0px; */ /* <-- REMOVED THIS */
+    margin-top: 10px;  /* Push down from top */
+    margin-left: 5px;  /* Center horizontally */
+    margin-right: 5px; /* Center horizontally */
 }
 
 
@@ -106,6 +127,20 @@ QDateEdit::drop-down {
     border-left-style: solid;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+    /* REMOVED image properties */
+}
+
+/* --- NEW SELECTOR for DateEdit arrow --- */
+QDateEdit::down-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #333333; /* Black arrow */
+    width: 0px;
+    height: 0px;
+    /* margin: 4px 4px 0px 0px; */ /* <-- REMOVED THIS */
+    margin-top: 10px;  /* Push down from top */
+    margin-left: 5px;  /* Center horizontally */
+    margin-right: 5px; /* Center horizontally */
 }
 
 
@@ -359,8 +394,28 @@ QComboBox QAbstractItemView {
     outline: 0px;
 }
 QComboBox::drop-down {
+    subcontrol-origin: padding;
+    subcontrol-position: top right;
+    width: 20px;
+    border-left-width: 1px;
+    border-left-color: #555555;
+    border-left-style: solid;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+    /* REMOVED: image, background-repeat, background-position */
+}
+
+/* --- NEW SELECTOR for the arrow (Dark) --- */
+QComboBox::down-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #EAEAEA; /* White arrow */
+    width: 0px;
+    height: 0px;
+    /* margin: 4px 4px 0px 0px; */ /* <-- REMOVED THIS */
+    margin-top: 10px;  /* Push down from top */
+    margin-left: 5px;  /* Center horizontally */
+    margin-right: 5px; /* Center horizontally */
 }
 
 
@@ -388,6 +443,20 @@ QDateEdit::drop-down {
     border-left-style: solid;
     border-top-right-radius: 6px;
     border-bottom-right-radius: 6px;
+    /* REMOVED image properties */
+}
+
+/* --- NEW SELECTOR for DateEdit arrow (Dark) --- */
+QDateEdit::down-arrow {
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-top: 5px solid #EAEAEA; /* White arrow */
+    width: 0px;
+    height: 0px;
+    /* margin: 4px 4px 0px 0px; */ /* <-- REMOVED THIS */
+    margin-top: 10px;  /* Push down from top */
+    margin-left: 5px;  /* Center horizontally */
+    margin-right: 5px; /* Center horizontally */
 }
 
 

@@ -8,7 +8,6 @@ class GetStartedScreen(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
         
-        # --- ADD OBJECT NAME ---
         self.setObjectName("GetStartedScreen")
 
         layout = QVBoxLayout(self)
@@ -30,18 +29,14 @@ class GetStartedScreen(QWidget):
         logo.setPixmap(
             pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
-        # --- REMOVE INLINE STYLE ---
-        # logo.setStyleSheet("background: transparent;")
 
         # Welcome text
         welcome_label = QLabel("Welcome to Watt's my Electricity Bill?")
         welcome_label.setObjectName("getStartedWelcome") # <-- ADD
         welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         
-        # --- REMOVE INLINE STYLE ---
-        # welcome_label.setStyleSheet(""" ... """)
         
-        # Replaced button with progress bar
+        # Progress bar
         self.progress = QProgressBar()
         self.progress.setRange(0, 100)
         self.progress.setValue(0)
@@ -49,9 +44,7 @@ class GetStartedScreen(QWidget):
         self.progress.setFixedHeight(24)
         self.progress.setTextVisible(False)
         self.progress.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        
-        # --- REMOVE INLINE STYLE ---
-        # self.progress.setStyleSheet(""" ... """)
+    
 
         # Animation setup
         from PyQt6.QtCore import QPropertyAnimation, QEasingCurve
@@ -71,9 +64,6 @@ class GetStartedScreen(QWidget):
         layout.addWidget(self.progress)
         layout.addStretch()
 
-        # --- REMOVE INLINE STYLE (Background Gradient) ---
-        # self.setStyleSheet(""" ... """)
-
         # Fade effect
         self.opacity = QGraphicsOpacityEffect()
         self.setGraphicsEffect(self.opacity)
@@ -82,7 +72,7 @@ class GetStartedScreen(QWidget):
 
         # timer for progress
         self._timer = QTimer(self)
-        self._timer.setInterval(30)  # adjust speed as desired
+        self._timer.setInterval(30)  # adjustable speed
         self._timer.timeout.connect(self._advance_progress)
 
         # make layout responsive

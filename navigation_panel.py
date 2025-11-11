@@ -10,26 +10,18 @@ class NavigationPanel(QWidget):
     def __init__(self, on_navigation_changed):
         super().__init__()
         
-        # --- ADD OBJECT NAME ---
         self.setObjectName("NavigationPanel")
         
         self.setMaximumWidth(250)
         self.setMinimumWidth(250)
         
-        # --- REMOVE INLINE STYLE ---
-        # self.setStyleSheet(""" ... """)
-
         # Main layout
         layout = QVBoxLayout(self)
         layout.setContentsMargins(0, 20, 0, 20)
         layout.setSpacing(20)
 
-        # Optional "Menu" label at top (you can remove if not needed)
         nav_title = QLabel("Menu")
         nav_title.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        
-        # --- REMOVE INLINE STYLE ---
-        # nav_title.setStyleSheet(""" ... """)
         
         layout.addWidget(nav_title)
 
@@ -37,13 +29,10 @@ class NavigationPanel(QWidget):
         self.nav_list = QListWidget()
         self.nav_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
         
-        # --- REMOVE INLINE STYLE ---
-        # self.nav_list.setStyleSheet(""" ... """)
-        
         layout.addWidget(self.nav_list)
 
-        # Add navigation items (same as your other pages)
-        nav_items = ["Calculate", "History", "Settings"] # <-- REMOVED "Profile"
+        # Add navigation items 
+        nav_items = ["Calculate", "History", "Settings"] 
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)

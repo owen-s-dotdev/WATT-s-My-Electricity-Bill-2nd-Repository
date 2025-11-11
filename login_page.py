@@ -11,11 +11,7 @@ class LoginPage(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
 
-        # --- ADD OBJECT NAME ---
-        self.setObjectName("LoginPage")
-
-        # --- REMOVE INLINE STYLE ---
-        # self.setStyleSheet("background-color: white; color: #FF5C00;")
+        self.setObjectName("LoginPage") 
 
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -36,41 +32,28 @@ class LoginPage(QWidget):
             pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
         
-        # --- REMOVE INLINE STYLE ---
-        # logo.setStyleSheet("background: transparent;") 
-
         # Username Label and Input
         username_label = QLabel("Username")
         username_label.setFont(QFont("Arial", 12))
         username_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
         
-        # --- REMOVE INLINE STYLE ---
-        # username_label.setStyleSheet("color: #FF5C00; background: transparent; font-family: 'Poppins';") 
-
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("Enter your username")
         self.username_input.setFixedWidth(300)
-        
-        # --- REMOVE INLINE STYLE ---
-        # self.username_input.setStyleSheet(""" ... """)
 
         # Buttons
         login_btn = QPushButton("Log in")
-        login_btn.setObjectName("orangeButton") # <-- ADD
-        # --- REMOVE INLINE STYLE ---
-        # login_btn.setStyleSheet(self.orange_button_style())
+        login_btn.setObjectName("orangeButton") 
+
         login_btn.clicked.connect(self.log_in)
 
         signup_btn = QPushButton("Sign up")
-        signup_btn.setObjectName("orangeButton") # <-- ADD
-        # --- REMOVE INLINE STYLE ---
-        # signup_btn.setStyleSheet(self.orange_button_style())
+        signup_btn.setObjectName("orangeButton")
+
         signup_btn.clicked.connect(self.sign_up)
 
         guest_btn = QPushButton("Continue without logging in")
-        guest_btn.setObjectName("guestButton") # <-- ADD
-        # --- REMOVE INLINE STYLE ---
-        # guest_btn.setStyleSheet(""" ... """)
+        guest_btn.setObjectName("guestButton")
         guest_btn.clicked.connect(self.continue_as_guest)
 
         # Layout assembly
@@ -86,10 +69,6 @@ class LoginPage(QWidget):
         self.setGraphicsEffect(self.opacity)
         self.opacity.setOpacity(0)
         self.fade_in()
-
-    # --- REMOVE THIS ENTIRE METHOD ---
-    # def orange_button_style(self):
-    #     return """ ... """
 
     # Fade animation
     def fade_in(self):

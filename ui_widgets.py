@@ -21,11 +21,13 @@ class InputWidget(QGroupBox):
         # --- Appliance Type ---
         input_type_txt = QLabel("Select Appliance Type")
         self.input_type_combo = QComboBox()
-        self.input_type_combo.addItem("Select Appliance...")
-        self.input_type_combo.model().item(0).setEnabled(False) 
+        # Add presets first
         self.input_type_combo.addItems(sorted(appliance_presets.keys()))
-        self.input_type_combo.setCurrentIndex(0)  
-        self.input_type_combo.setEditable(False)
+        
+        # Make it editable and add placeholder text
+        self.input_type_combo.setEditable(True)
+        self.input_type_combo.setPlaceholderText("Select preset or enter new appliance...")
+        self.input_type_combo.setCurrentIndex(-1) # Show placeholder
 
         # --- Power Input ---
         power_label = QLabel("Power Consumption")
@@ -91,7 +93,8 @@ class InputWidget(QGroupBox):
 
     def reset(self):
         """Resets all input fields to their default state."""
-        self.input_type_combo.setCurrentIndex(0)
+        self.input_type_combo.setCurrentIndex(-1)
+        self.input_type_combo.setEditText("")
         self.power_input.setCurrentIndex(-1)
         self.usage_input.setCurrentIndex(-1)
         self.rate_input.setCurrentIndex(-1)

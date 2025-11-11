@@ -1,7 +1,7 @@
 # pages.py
 import os
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QTextEdit, QCheckBox,  # <-- Import QCheckBox
+    QWidget, QVBoxLayout, QLabel, QTextEdit, QCheckBox,  
     QComboBox, QPushButton, QMessageBox, QGraphicsOpacityEffect
 )
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
@@ -15,11 +15,7 @@ class BasePage(QWidget):
         
         self.title_label = QLabel(title)
         
-        # --- ADD OBJECT NAME ---
         self.title_label.setObjectName("pageTitle")
-        
-        # --- REMOVE INLINE STYLE ---
-        # self.title_label.setStyleSheet(""" ... """)
         
         self.layout.addWidget(self.title_label)
 
@@ -75,19 +71,18 @@ class SettingsPage(BasePage):
         super().__init__("Settings")
         self.theme_manager = theme_manager # <-- STORE IT
         
-        # --- ADD THE DARK MODE TOGGLE ---
+        # Dark Mode Toggle
         self.theme_toggle_cb = QCheckBox("Enable Dark Mode")
-        # You can add simple, non-theme-specific styles here if needed
+        
         self.theme_toggle_cb.setStyleSheet("font-size: 16px; margin-top: 10px;") 
         
-        # Set its initial state based on the current theme
+        # Set its initial state based on the current theme (Exiting when in dark mode will load it in dark mode next time)
         self.theme_toggle_cb.setChecked(self.theme_manager.current_theme == "dark")
         
         # Connect the toggle signal to a handler function
         self.theme_toggle_cb.toggled.connect(self.handle_theme_change)
         
         self.layout.addWidget(self.theme_toggle_cb)
-        # --- END ADD ---
 
     def handle_theme_change(self, is_checked):
         """Called when the checkbox is toggled."""

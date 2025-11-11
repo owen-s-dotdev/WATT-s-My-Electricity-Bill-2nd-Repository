@@ -5,14 +5,14 @@ from PyQt6.QtCore import QSize
 from getstarted import GetStartedScreen
 from login_page import LoginPage
 from calculator_app import MainWindow
-from pages import HistoryPage, SettingsPage  # <-- We will remove ProfilePage from pages.py, but this line is fine
+from pages import HistoryPage, SettingsPage 
 from navigation_panel import NavigationPanel  # imported modular nav
 
 
 class AppController(QMainWindow):
-    def __init__(self, theme_manager): # <-- ACCEPT THEME MANAGER
+    def __init__(self, theme_manager): 
         super().__init__()
-        self.theme_manager = theme_manager # <-- STORE IT
+        self.theme_manager = theme_manager 
         self.setWindowTitle("Electricity Bill App")
         self.resize(QSize(1200, 800))
 
@@ -32,8 +32,7 @@ class AppController(QMainWindow):
         self.main_screen = MainWindow()
         self.history_screen = HistoryPage()
         
-        # --- MODIFY THIS LINE ---
-        self.settings_screen = SettingsPage(theme_manager) # <-- PASS IT
+        self.settings_screen = SettingsPage(theme_manager) 
 
         # Add pages to stack
         self.stack.addWidget(self.get_started_screen)
@@ -66,7 +65,7 @@ class AppController(QMainWindow):
 
         if not self.nav_container.isVisible():
             self.nav_container.show()
-        # This logic (stack_index - 2) remains correct
+        
         nav_index = stack_index - 2
         if 0 <= nav_index < self.nav_container.nav_list.count():
             try:
@@ -82,11 +81,11 @@ class AppController(QMainWindow):
         self.stack.setCurrentIndex(stack_index)
 
         # If user clicks "History", load their file
-        # --- UPDATE THIS INDEX ---
-        if index == 1:  # History is now 2nd item (index 1)
+        
+        if index == 1:  
             current_user = getattr(self.login_screen, "current_user", "Guest")
             self.history_screen.load_history(current_user)
 
-        # --- UPDATE THIS INDEX ---
+        # Fade in main screen when navigated to it
         if index == 0 and hasattr(self.main_screen, 'fade_in'): # Calculate is now 1st item (index 0)
             self.main_screen.fade_in()

@@ -1,3 +1,4 @@
+# calculator_app.py
 """
 Main application window (the "Controller").
 
@@ -11,8 +12,7 @@ from PyQt6.QtWidgets import (
 )
 from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve, Qt, QDate
 
-# --- Local Module Imports ---
-# --- REMOVED: from styles import MODERN_STYLESHEET ---
+# Local Module Imports
 from app_data import APPLIANCE_PRESETS
 from ui_widgets import InputWidget, ButtonWidget, OutputWidget
 from logic import calculate_total_cost, save_history
@@ -21,20 +21,15 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
 
-        self.current_user = None # Can be set by your login/main driver
+        self.current_user = None # Set by login
         self.setWindowTitle("Watt's my Electricity Bill?")
         self.setWindowOpacity(0)
 
         # --- Main Layout Setup ---
         central = QWidget()
-        central.setObjectName("centralWidget") 
+        central.setObjectName("centralWidget") # setObjectName for styling from styles.py 
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
-        
-        # --- REMOVED STYLESHEET LOGIC ---
-        # app_instance = QApplication.instance()
-        # if app_instance:
-        #     app_instance.setStyleSheet(MODERN_STYLESHEET)
         
         # --- Instantiate UI Widgets ---
         self.input_widget = InputWidget(APPLIANCE_PRESETS)
@@ -77,8 +72,9 @@ class MainWindow(QMainWindow):
         usage = self.input_widget.usage_input.currentText()
         rate = self.input_widget.rate_input.currentText()
 
-        if appliance == "Select Appliance..." or not (power and usage and rate):
-            QMessageBox.warning(self, "Missing Input", "Please select an appliance and fill in all fields.")
+        # Check if appliance string is empty (placeholder) or other fields are empty
+        if not appliance or not (power and usage and rate):
+            QMessageBox.warning(self, "Missing Input", "Please select or enter an appliance and fill in all fields.")
             return
 
         # --- Validation ---
@@ -95,7 +91,8 @@ class MainWindow(QMainWindow):
         self.input_widget.appliances_added_combo.addItem(entry)
         
         # Reset only the input fields, not the whole widget
-        self.input_widget.input_type_combo.setCurrentIndex(0)
+        self.input_widget.input_type_combo.setCurrentIndex(-1) # Reset to placeholder
+        self.input_widget.input_type_combo.setEditText("")
         self.input_widget.power_input.setEditText("")
         self.input_widget.usage_input.setEditText("")
         self.input_widget.rate_input.setEditText("")
@@ -155,13 +152,12 @@ class MainWindow(QMainWindow):
         """
         Triggered when the user selects a different appliance.
         """
-        if index <= 0:
-            # "Select Appliance..." was chosen, clear fields
-            self.input_widget.power_input.setEditText("")
-            self.input_widget.usage_input.setEditText("")
-            self.input_widget.rate_input.setEditText("")
+        if index == -1:
+            # User is typing a custom appliance name, do nothing.
+            # We don't want to clear the other fields they might be typing.
             return
-            
+        
+        # A preset item was selected from the list, so fill the defaults.
         appliance_name = self.input_widget.input_type_combo.itemText(index)
         self.fill_appliance_defaults(appliance_name)
     
