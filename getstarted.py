@@ -1,4 +1,4 @@
-# get started
+# get_started.py
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect, QProgressBar, QSizePolicy, QSpacerItem
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer

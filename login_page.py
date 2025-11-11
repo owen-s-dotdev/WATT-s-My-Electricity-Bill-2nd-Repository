@@ -1,4 +1,4 @@
-# login page
+# login_page.py
 
 import os
 from PyQt6.QtWidgets import (
