@@ -1,4 +1,4 @@
-# get_started.py
+# getstarted.py
 
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect, QProgressBar, QSizePolicy, QSpacerItem
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer
@@ -17,45 +17,60 @@ class GetStartedScreen(QWidget):
         # Logo
         logo = QLabel()
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pixmap = QPixmap("C:/Users/JAMES/PYTHON FILES/PROJECT OOP/assets/ECB OOP.png")
+        pixmap = QPixmap("C:/Users/JAMES/PYTHON FILES/PROJECT OOP/assets/ECB OOP2.png")
         if pixmap.isNull():
             print("⚠️ Could not load logo image. Check path.")
         logo.setPixmap(
-            pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            pixmap.scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
+        logo.setStyleSheet("background: transparent;")
 
         # Welcome text
         welcome_label = QLabel("Welcome to Watt's my Electricity Bill?")
         welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        welcome_label.setStyleSheet("font-size: 24px; color: #2C3E50; margin: 0; padding: 0;")
+        welcome_label.setStyleSheet("""
+            background: transparent;
+            font-family: 'Poppins';
+            font-size: 24px;
+            font-weight: bold;
+            color: #FF5C00;
+            margin: 0;
+            padding: 0;
+        """)
+        
 
         # Replaced button with progress bar
         self.progress = QProgressBar()
         self.progress.setRange(0, 100)
         self.progress.setValue(0)
-        self.progress.setFixedWidth(1000)
+        self.progress.setFixedWidth(750)
+        self.progress.setFixedHeight(24)
         self.progress.setTextVisible(False)
         self.progress.setAlignment(Qt.AlignmentFlag.AlignCenter)
         self.progress.setStyleSheet("""
         QProgressBar {
-            border: 1px solid #2E2E2E;
-            border-radius: 10px;
-            background-color: #1E1E1E;
-            color: #E5D1FF;
-            text-align: center;
-            height: 14px;
-            font-size: 13px;
-            padding: 1px;
+            border: none;
+            border-radius: 12px;
+            background-color: #555555;
+            padding: 2px;  
         }
         QProgressBar::chunk {
-            border-radius: 10px;
-            background-color: qlineargradient(
-                spread:pad, x1:0, y1:0, x2:1, y2:0,
-                stop:0 #9b59b6, stop:1 #8e44ad
-            );
-            margin: 1px;  /* ensures smooth blending */
+            border-radius: 10px; 
+            background-color: #F4A261;
+            margin: 0px;
         }
         """)
+
+
+        # Animation setup
+        from PyQt6.QtCore import QPropertyAnimation, QEasingCurve
+        self.progress_anim = QPropertyAnimation(self.progress, b"value")
+        self.progress_anim.setDuration(2000)  # total duration (ms)
+        self.progress_anim.setStartValue(0)
+        self.progress_anim.setEndValue(100)
+        self.progress_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
+        self.progress_anim.finished.connect(self.fade_out)
+
 
         # Layout
         layout.addStretch()
@@ -65,6 +80,16 @@ class GetStartedScreen(QWidget):
         layout.addSpacing(20)
         layout.addWidget(self.progress)
         layout.addStretch()
+
+        # Set background gradient (match login style)
+        self.setStyleSheet("""
+            QWidget {
+                background: qlineargradient(
+                    spread:pad, x1:0, y1:0, x2:0, y2:1,
+                    stop:0 #FF8C00, stop:1 #FF4500
+                );
+            }
+        """)
 
         # Fade effect
         self.opacity = QGraphicsOpacityEffect()
@@ -94,7 +119,8 @@ class GetStartedScreen(QWidget):
     # start filling the progress bar
     def start_loading(self):
         self.progress.setValue(0)
-        self._timer.start()
+        self.progress_anim.start()
+
 
     # advance the progress bar, then transition when done
     def _advance_progress(self):
