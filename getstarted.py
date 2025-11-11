@@ -20,7 +20,7 @@ class GetStartedScreen(QWidget):
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
 
         base_dir = os.path.dirname(os.path.abspath(__file__))
-        image_path = os.path.join(base_dir, "assets", "ECB OOP_logo.png")
+        image_path = os.path.join(base_dir, "assets", "ECB_OOP_logo.png")
 
         pixmap = QPixmap(image_path)
         if pixmap.isNull():
