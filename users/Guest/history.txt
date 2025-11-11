@@ -1,0 +1,6 @@
+---- New Calculation ----
+Electric Fan - 75W x 6hr @ 12₱/kWh
+Laptop - 60W x 6hr @ 12₱/kWh
+Light Bulb - 10W x 5hr @ 12₱/kWh
+Total Daily: ₱10.32, Monthly: ₱309.60
+
