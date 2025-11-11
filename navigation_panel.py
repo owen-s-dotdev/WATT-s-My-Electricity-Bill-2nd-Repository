@@ -9,15 +9,15 @@ from PyQt6.QtCore import Qt
 class NavigationPanel(QWidget):
     def __init__(self, on_navigation_changed):
         super().__init__()
+        
+        # --- ADD OBJECT NAME ---
+        self.setObjectName("NavigationPanel")
+        
         self.setMaximumWidth(250)
         self.setMinimumWidth(250)
-        # Sidebar background and right border (orange strip)
-        self.setStyleSheet("""
-            QWidget {
-                background-color: #FFFFFF;
-                border-right: 20px solid #FF4B2B;
-            }
-        """)
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.setStyleSheet(""" ... """)
 
         # Main layout
         layout = QVBoxLayout(self)
@@ -27,46 +27,23 @@ class NavigationPanel(QWidget):
         # Optional "Menu" label at top (you can remove if not needed)
         nav_title = QLabel("Menu")
         nav_title.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        nav_title.setStyleSheet("""
-            QLabel {
-                color: #FF3C00;
-                font-family: 'Poppins';
-                font-size: 20px;
-                font-weight: bold;
-                padding-left: 16px;
-            }
-        """)
+        
+        # --- REMOVE INLINE STYLE ---
+        # nav_title.setStyleSheet(""" ... """)
+        
         layout.addWidget(nav_title)
 
         # Navigation list
         self.nav_list = QListWidget()
         self.nav_list.setSelectionMode(QAbstractItemView.SelectionMode.SingleSelection)
-        self.nav_list.setStyleSheet("""
-            QListWidget {
-                background-color: transparent;
-                border: none;
-                outline: none;
-            }
-            QListWidget::item {
-                color: #FF3C00;
-                padding: 18px 16px;
-                font-family: 'Poppins';
-                font-size: 20px;
-                font-weight: bold;
-            }
-            QListWidget::item:selected {
-                background-color: #FFC04C;
-                color: #FF3C00;
-                font-weight: 700;
-            }
-            QListWidget::item:hover {
-                background-color: #FFD580;
-            }
-        """)
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.nav_list.setStyleSheet(""" ... """)
+        
         layout.addWidget(self.nav_list)
 
         # Add navigation items (same as your other pages)
-        nav_items = ["Profile", "Calculate", "History", "Settings"]
+        nav_items = ["Calculate", "History", "Settings"] # <-- REMOVED "Profile"
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)

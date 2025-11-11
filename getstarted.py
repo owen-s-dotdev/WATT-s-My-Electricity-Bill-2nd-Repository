@@ -1,5 +1,3 @@
-# getstarted.py
-
 import os
 from PyQt6.QtWidgets import QWidget, QVBoxLayout, QLabel, QPushButton, QGraphicsOpacityEffect, QProgressBar, QSizePolicy, QSpacerItem
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve, QTimer
@@ -9,6 +7,9 @@ class GetStartedScreen(QWidget):
     def __init__(self, stacked_widget):
         super().__init__()
         self.stacked_widget = stacked_widget
+        
+        # --- ADD OBJECT NAME ---
+        self.setObjectName("GetStartedScreen")
 
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -29,22 +30,17 @@ class GetStartedScreen(QWidget):
         logo.setPixmap(
             pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
-        logo.setStyleSheet("background: transparent;")
+        # --- REMOVE INLINE STYLE ---
+        # logo.setStyleSheet("background: transparent;")
 
         # Welcome text
         welcome_label = QLabel("Welcome to Watt's my Electricity Bill?")
+        welcome_label.setObjectName("getStartedWelcome") # <-- ADD
         welcome_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        welcome_label.setStyleSheet("""
-            background: transparent;
-            font-family: 'Poppins';
-            font-size: 24px;
-            font-weight: bold;
-            color: #FF5C00;
-            margin: 0;
-            padding: 0;
-        """)
         
-
+        # --- REMOVE INLINE STYLE ---
+        # welcome_label.setStyleSheet(""" ... """)
+        
         # Replaced button with progress bar
         self.progress = QProgressBar()
         self.progress.setRange(0, 100)
@@ -53,20 +49,9 @@ class GetStartedScreen(QWidget):
         self.progress.setFixedHeight(24)
         self.progress.setTextVisible(False)
         self.progress.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.progress.setStyleSheet("""
-        QProgressBar {
-            border: none;
-            border-radius: 12px;
-            background-color: #555555;
-            padding: 2px;  
-        }
-        QProgressBar::chunk {
-            border-radius: 10px; 
-            background-color: #F4A261;
-            margin: 0px;
-        }
-        """)
-
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.progress.setStyleSheet(""" ... """)
 
         # Animation setup
         from PyQt6.QtCore import QPropertyAnimation, QEasingCurve
@@ -77,7 +62,6 @@ class GetStartedScreen(QWidget):
         self.progress_anim.setEasingCurve(QEasingCurve.Type.InOutCubic)
         self.progress_anim.finished.connect(self.fade_out)
 
-
         # Layout
         layout.addStretch()
         layout.addWidget(logo)
@@ -87,15 +71,8 @@ class GetStartedScreen(QWidget):
         layout.addWidget(self.progress)
         layout.addStretch()
 
-        # Set background gradient (match login style)
-        self.setStyleSheet("""
-            QWidget {
-                background: qlineargradient(
-                    spread:pad, x1:0, y1:0, x2:0, y2:1,
-                    stop:0 #FF8C00, stop:1 #FF4500
-                );
-            }
-        """)
+        # --- REMOVE INLINE STYLE (Background Gradient) ---
+        # self.setStyleSheet(""" ... """)
 
         # Fade effect
         self.opacity = QGraphicsOpacityEffect()
@@ -127,14 +104,13 @@ class GetStartedScreen(QWidget):
         self.progress.setValue(0)
         self.progress_anim.start()
 
-
     # advance the progress bar, then transition when done
     def _advance_progress(self):
         val = self.progress.value() + 2
         if val >= 100:
             self.progress.setValue(100)
             self._timer.stop()
-            self.fade_out()   # proceed to fade out and switch screen
+            self.fade_out()  # proceed to fade out and switch screen
             return
         self.progress.setValue(val)
 

@@ -1,5 +1,3 @@
-# calculator_app.py
-
 """
 Main application window (the "Controller").
 
@@ -14,7 +12,7 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import QSize, QPropertyAnimation, QEasingCurve, Qt, QDate
 
 # --- Local Module Imports ---
-from styles import MODERN_STYLESHEET
+# --- REMOVED: from styles import MODERN_STYLESHEET ---
 from app_data import APPLIANCE_PRESETS
 from ui_widgets import InputWidget, ButtonWidget, OutputWidget
 from logic import calculate_total_cost, save_history
@@ -33,11 +31,10 @@ class MainWindow(QMainWindow):
         self.main_layout = QVBoxLayout(central)
         self.setCentralWidget(central)
         
-        # --- Apply Stylesheet Globally ---
-        # This ensures the calendar popup also gets styled
-        app_instance = QApplication.instance()
-        if app_instance:
-            app_instance.setStyleSheet(MODERN_STYLESHEET)
+        # --- REMOVED STYLESHEET LOGIC ---
+        # app_instance = QApplication.instance()
+        # if app_instance:
+        #     app_instance.setStyleSheet(MODERN_STYLESHEET)
         
         # --- Instantiate UI Widgets ---
         self.input_widget = InputWidget(APPLIANCE_PRESETS)

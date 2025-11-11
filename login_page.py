@@ -11,8 +11,11 @@ class LoginPage(QWidget):
         super().__init__()
         self.stacked_widget = stacked_widget
 
-        # White background and orange theme
-        self.setStyleSheet("background-color: white; color: #FF5C00;")
+        # --- ADD OBJECT NAME ---
+        self.setObjectName("LoginPage")
+
+        # --- REMOVE INLINE STYLE ---
+        # self.setStyleSheet("background-color: white; color: #FF5C00;")
 
         layout = QVBoxLayout(self)
         layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
@@ -32,54 +35,42 @@ class LoginPage(QWidget):
         logo.setPixmap(
             pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
-        logo.setStyleSheet("background: transparent;") 
+        
+        # --- REMOVE INLINE STYLE ---
+        # logo.setStyleSheet("background: transparent;") 
 
         # Username Label and Input
         username_label = QLabel("Username")
         username_label.setFont(QFont("Arial", 12))
         username_label.setAlignment(Qt.AlignmentFlag.AlignLeft)
-        username_label.setStyleSheet("color: #FF5C00; background: transparent; font-family: 'Poppins';") 
+        
+        # --- REMOVE INLINE STYLE ---
+        # username_label.setStyleSheet("color: #FF5C00; background: transparent; font-family: 'Poppins';") 
 
         self.username_input = QLineEdit()
         self.username_input.setPlaceholderText("Enter your username")
         self.username_input.setFixedWidth(300)
-        self.username_input.setStyleSheet("""
-            QLineEdit {
-                background-color: #FFB97D;
-                border: none;
-                border-radius: 4px;
-                padding: 10px;
-                color: white;
-                font-size: 14px;
-                font-family: 'Poppins';
-            }
-            QLineEdit::placeholder {
-                color: white;
-            }
-        """)
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.username_input.setStyleSheet(""" ... """)
 
         # Buttons
         login_btn = QPushButton("Log in")
-        login_btn.setStyleSheet(self.orange_button_style())
+        login_btn.setObjectName("orangeButton") # <-- ADD
+        # --- REMOVE INLINE STYLE ---
+        # login_btn.setStyleSheet(self.orange_button_style())
         login_btn.clicked.connect(self.log_in)
 
         signup_btn = QPushButton("Sign up")
-        signup_btn.setStyleSheet(self.orange_button_style())
+        signup_btn.setObjectName("orangeButton") # <-- ADD
+        # --- REMOVE INLINE STYLE ---
+        # signup_btn.setStyleSheet(self.orange_button_style())
         signup_btn.clicked.connect(self.sign_up)
 
         guest_btn = QPushButton("Continue without logging in")
-        guest_btn.setStyleSheet("""
-            QPushButton {
-                background-color: transparent;
-                color: #FF5C00;
-                font-size: 14px;
-                border: none;
-                font-family: 'Poppins';
-            }
-            QPushButton:hover {
-                text-decoration: underline;
-            }
-        """)
+        guest_btn.setObjectName("guestButton") # <-- ADD
+        # --- REMOVE INLINE STYLE ---
+        # guest_btn.setStyleSheet(""" ... """)
         guest_btn.clicked.connect(self.continue_as_guest)
 
         # Layout assembly
@@ -96,21 +87,9 @@ class LoginPage(QWidget):
         self.opacity.setOpacity(0)
         self.fade_in()
 
-    def orange_button_style(self):
-        return """
-            QPushButton {
-                background-color: #FF5C00;
-                color: white;
-                font-size: 16px;
-                font-weight: bold;
-                padding: 10px 25px;
-                border-radius: 25px;
-                border: none;
-            }
-            QPushButton:hover {
-                background-color: #FF7B1A;
-            }
-        """
+    # --- REMOVE THIS ENTIRE METHOD ---
+    # def orange_button_style(self):
+    #     return """ ... """
 
     # Fade animation
     def fade_in(self):
@@ -175,8 +154,8 @@ class LoginPage(QWidget):
         self.anim.start()
 
     def switch_to_calculator(self):
-        calculator_screen = self.stacked_widget.widget(3)
+        calculator_screen = self.stacked_widget.widget(2)
         calculator_screen.current_user = self.current_user
-        self.stacked_widget.setCurrentIndex(3)
+        self.stacked_widget.setCurrentIndex(2)
         if hasattr(calculator_screen, 'fade_in'):
             calculator_screen.fade_in()

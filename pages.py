@@ -1,8 +1,8 @@
 # pages.py
-
 import os
 from PyQt6.QtWidgets import (
-    QWidget, QVBoxLayout, QLabel, QTextEdit, QCheckBox, QComboBox, QPushButton, QMessageBox, QGraphicsOpacityEffect
+    QWidget, QVBoxLayout, QLabel, QTextEdit, QCheckBox,  # <-- Import QCheckBox
+    QComboBox, QPushButton, QMessageBox, QGraphicsOpacityEffect
 )
 from PyQt6.QtCore import Qt, QPropertyAnimation, QEasingCurve
 
@@ -14,28 +14,23 @@ class BasePage(QWidget):
         self.layout.setAlignment(Qt.AlignmentFlag.AlignTop)
         
         self.title_label = QLabel(title)
-        self.title_label.setStyleSheet("""
-            QLabel {
-                font-size: 24px;
-                color: #FF5C00;
-                margin: 20px 0;
-                font-family: 'Poppins';
-            }
-        """)
+        
+        # --- ADD OBJECT NAME ---
+        self.title_label.setObjectName("pageTitle")
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.title_label.setStyleSheet(""" ... """)
+        
         self.layout.addWidget(self.title_label)
-
-
-# Profile Page
-class ProfilePage(BasePage):
-    def __init__(self):
-        super().__init__("Profile")
-        # Add profile-specific widgets here
 
 
 # History Page
 class HistoryPage(BasePage):
     def __init__(self):
         super().__init__("History")
+        
+        # --- ADD OBJECT NAME ---
+        self.setObjectName("HistoryPage")
 
         self.opacity = QGraphicsOpacityEffect()
         self.setGraphicsEffect(self.opacity)
@@ -43,17 +38,10 @@ class HistoryPage(BasePage):
 
         self.text_area = QTextEdit()
         self.text_area.setReadOnly(True)
-        self.text_area.setStyleSheet("""
-            QTextEdit {
-                background-color: #FFF3E0;
-                border: 1px solid #FFB97D;
-                border-radius: 10px;
-                padding: 12px;
-                font-family: 'Poppins';
-                font-size: 14px;
-                color: #2C3E50;
-            }
-        """)
+        
+        # --- REMOVE INLINE STYLE ---
+        # self.text_area.setStyleSheet(""" ... """)
+        
         self.layout.addWidget(self.text_area)
 
     def load_history(self, username):
@@ -83,6 +71,27 @@ class HistoryPage(BasePage):
 
 # Settings Page
 class SettingsPage(BasePage):
-    def __init__(self, app_controller=None):
+    def __init__(self, theme_manager): # <-- ACCEPT THEME MANAGER
         super().__init__("Settings")
-        # Add settings-specific widgets here
+        self.theme_manager = theme_manager # <-- STORE IT
+        
+        # --- ADD THE DARK MODE TOGGLE ---
+        self.theme_toggle_cb = QCheckBox("Enable Dark Mode")
+        # You can add simple, non-theme-specific styles here if needed
+        self.theme_toggle_cb.setStyleSheet("font-size: 16px; margin-top: 10px;") 
+        
+        # Set its initial state based on the current theme
+        self.theme_toggle_cb.setChecked(self.theme_manager.current_theme == "dark")
+        
+        # Connect the toggle signal to a handler function
+        self.theme_toggle_cb.toggled.connect(self.handle_theme_change)
+        
+        self.layout.addWidget(self.theme_toggle_cb)
+        # --- END ADD ---
+
+    def handle_theme_change(self, is_checked):
+        """Called when the checkbox is toggled."""
+        if is_checked:
+            self.theme_manager.set_theme("dark")
+        else:
+            self.theme_manager.set_theme("light")
