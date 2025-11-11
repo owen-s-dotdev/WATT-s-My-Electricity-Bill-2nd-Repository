@@ -21,11 +21,16 @@ class LoginPage(QWidget):
         # Logo
         logo = QLabel()
         logo.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        pixmap = QPixmap("C:/Users/JAMES/PYTHON FILES/PROJECT OOP/assets/ECB OOP2.png")
+
+        base_dir = os.path.dirname(os.path.abspath(__file__))
+        image_path = os.path.join(base_dir, "assets", "ECB OOP_logo.png")
+
+        pixmap = QPixmap(image_path)
         if pixmap.isNull():
-            print("⚠️ Could not load logo image. Check path.")
+            print(f"⚠️ Could not load logo image at: {image_path}")
+
         logo.setPixmap(
-            pixmap.scaled(300, 300, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
+            pixmap.scaled(225, 225, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
         )
         logo.setStyleSheet("background: transparent;") 
 
