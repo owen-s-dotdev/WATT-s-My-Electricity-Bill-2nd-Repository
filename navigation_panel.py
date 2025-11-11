@@ -11,26 +11,29 @@ class NavigationPanel(QWidget):
         super().__init__()
         self.setMaximumWidth(250)
         self.setMinimumWidth(250)
+        # Sidebar background and right border (orange strip)
         self.setStyleSheet("""
             QWidget {
-                background-color: #2C3E50;
-                border-right: 2px solid #34495E;
+                background-color: #FFFFFF;
+                border-right: 20px solid #FF4B2B;
             }
         """)
 
+        # Main layout
         layout = QVBoxLayout(self)
-        layout.setContentsMargins(0, 0, 0, 0)
-        layout.setSpacing(0)
+        layout.setContentsMargins(0, 20, 0, 20)
+        layout.setSpacing(20)
 
-        # Navigation title
+        # Optional "Menu" label at top (you can remove if not needed)
         nav_title = QLabel("Menu")
+        nav_title.setAlignment(Qt.AlignmentFlag.AlignLeft)
         nav_title.setStyleSheet("""
             QLabel {
-                color: white;
-                font-size: 18px;
-                padding: 14px;
-                background-color: #1a2634;
-                border-bottom: 2px solid #34495E;
+                color: #FF3C00;
+                font-family: 'Poppins';
+                font-size: 20px;
+                font-weight: bold;
+                padding-left: 16px;
             }
         """)
         layout.addWidget(nav_title)
@@ -45,29 +48,29 @@ class NavigationPanel(QWidget):
                 outline: none;
             }
             QListWidget::item {
-                color: #34495E;
-                padding: 14px 18px;
-                border-bottom: 1px solid #34495E;
-                font-size: 14px;
+                color: #FF3C00;
+                padding: 18px 16px;
+                font-family: 'Poppins';
+                font-size: 20px;
+                font-weight: bold;
             }
             QListWidget::item:selected {
-                background-color: #34495E;
-                color: #FFFFFF;
-                border-left: 6px solid #3498DB;
-                padding-left: 12px; /* account for left border */
+                background-color: #FFC04C;
+                color: #FF3C00;
+                font-weight: 700;
             }
             QListWidget::item:hover {
-                background-color: #375a7f;
+                background-color: #FFD580;
             }
         """)
         layout.addWidget(self.nav_list)
 
-        # Add navigation items
-        nav_items = ["Profile", "Calculator", "History", "Settings"]
+        # Add navigation items (same as your other pages)
+        nav_items = ["Profile", "Calculate", "History", "Settings"]
         for item in nav_items:
             list_item = QListWidgetItem(item)
             list_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             self.nav_list.addItem(list_item)
 
-        # Connect navigation callback
+        # Connect navigation change callback
         self.nav_list.currentRowChanged.connect(on_navigation_changed)
